@@ -2836,6 +2836,12 @@ input, select, textarea {
 				color: #ffffff;
 			}
 
+			.wrapper.style1 h2 + p {
+				padding-left: 14em;
+				padding-right: 14em;
+				display: block; /* ensures padding works properly */
+			}
+
 			.wrapper.style1 hr {
 				border-color: rgba(0, 0, 0, 0.125);
 			}
