@@ -60,10 +60,74 @@
 								<p>The data presented here is hypothetical. All data used to train models which output is displayed </br>
 								was generated virtually. However, the randomization was limited to realistic commodity yield bounds.</p>
 
-								<p>Vestibulum ultrices risus velit, sit amet blandit massa auctor sit amet. Sed eu lectus sem. Phasellus in odio at ipsum porttitor mollis id vel diam. Praesent sit amet posuere risus, eu faucibus lectus. Vivamus ex ligula, tempus pulvinar ipsum in, auctor porta quam. Proin nec dui cursus, posuere dui eget interdum. Fusce lectus magna, sagittis at facilisis vitae, pellentesque at etiam. Quisque posuere leo quis sem commodo, vel scelerisque nisi scelerisque. Suspendisse id quam vel tortor tincidunt suscipit. Nullam auctor orci eu dolor consectetur, interdum ullamcorper ante tincidunt. Mauris felis nec felis elementum varius.</p>
+								<!-- ====== Interactive Commodity Yield Forecasting Dashboard (Client-side) ====== -->
+								<h3 style="margin-top:2rem;">Interactive Dashboard (Client-side)</h3>
+								<p>This tool loads a precomputed CSV and updates the charts entirely in your browser. No server required.</p>
 
-								<img src="images/Bergen_freq_docking_time.png" alt="Dashboard preview" style="max-width:100%; height:auto; display:block; margin-bottom:20px;">
-								
+								<!-- Panel A controls -->
+								<div id="panel-a" class="dash-panel">
+								<h4>Top plot (TEST)</h4>
+								<div class="controls">
+									<label>Crop
+									<select id="crop-a"></select>
+									</label>
+									<label>Variable
+									<select id="var-a"></select>
+									</label>
+									<label>Aggregation
+									<select id="agg-a">
+										<option value="municipality">Municipality</option>
+										<option value="region">Region</option>
+										<option value="state">State</option>
+									</select>
+									</label>
+									<label>Unit
+									<select id="unit-a"></select>
+									</label>
+								</div>
+								<div id="chart-a" class="chart"></div>
+								</div>
+
+								<hr />
+
+								<!-- Panel B controls -->
+								<div id="panel-b" class="dash-panel">
+								<h4>Bottom plot (TEST)</h4>
+								<div class="controls">
+									<label>Crop
+									<select id="crop-b"></select>
+									</label>
+									<label>Variable
+									<select id="var-b"></select>
+									</label>
+									<label>Aggregation
+									<select id="agg-b">
+										<option value="municipality">Municipality</option>
+										<option value="region">Region</option>
+										<option value="state">State</option>
+									</select>
+									</label>
+									<label>Unit
+									<select id="unit-b"></select>
+									</label>
+								</div>
+								<div id="chart-b" class="chart"></div>
+								</div>
+
+								<style>
+								/* Minimal styling that blends with HTML5UP theme */
+								.dash-panel { margin: 1.5rem 0; }
+								.dash-panel .controls {
+									display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 10px;
+								}
+								.dash-panel label { font-weight: 600; color: #111; }
+								.dash-panel select {
+									margin-left: 6px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; color: #111;
+									background: #fff;
+								}
+								.chart { width: 100%; height: 420px; }
+								</style>
+
 								<hr />
 
 								<h4>Feugiat aliquam</h4>
@@ -92,6 +156,174 @@
 			</div>
 
 		<!-- Scripts -->
+			<!-- Plotly + d3 for client-side CSV loading and plotting -->
+			<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+			<script>
+				(function() {
+				const CSV_URL = "../data/model_weekly_metrics_and_forecasts.csv"; // adjust if needed
+				const TEST_ONLY = true; // we only display the TEST set, as requested
+
+				// Helpers
+				const uniq = arr => Array.from(new Set(arr)).sort();
+				const toFloat = v => (v === null || v === undefined || v === "" ? NaN : +v);
+
+				// Build options in a <select>
+				function fillSelect(selectEl, values, { pretty = (x)=>x } = {}) {
+					selectEl.innerHTML = values.map(v => `<option value="${v}">${pretty(v)}</option>`).join("");
+				}
+
+				// Pretty labels
+				const prettyCrop = c => c.replace(/_/g, " ").replace(/\b\w/g, m => m.toUpperCase());
+				const prettyAgg = a => a.charAt(0).toUpperCase() + a.slice(1);
+
+				// Filter & prepare series for one panel
+				function getSeries(df, crop, variable, aggregation, unit) {
+					let sub = df.filter(d =>
+					d.crop === crop &&
+					d.variable === variable &&
+					d.aggregation === aggregation &&
+					(!unit || d.unit === unit) &&
+					(!TEST_ONLY || d.set === "test")
+					);
+
+					// Coerce numeric
+					sub.forEach(d => {
+					d.week = +d.week;
+					d.mean_pred_yield_test = toFloat(d.mean_pred_yield_test);
+					d.r2_adj = Math.max(0, toFloat(d.r2_adj)); // clamp R² >= 0 (matches your requirement)
+					});
+
+					// Sort by week
+					sub.sort((a,b) => a.week - b.week);
+
+					return {
+					x: sub.map(d => d.week),
+					y_pred: sub.map(d => d.mean_pred_yield_test),
+					y_r2: sub.map(d => isFinite(d.r2_adj) ? d.r2_adj : 0),
+					title: `${prettyCrop(crop)} | ${variable} | ${prettyAgg(aggregation)} [${unit || "All"}]`
+					};
+				}
+
+				// Draw/update a dual-axis chart
+				function drawChart(containerId, series) {
+					const el = document.getElementById(containerId);
+					const data = [
+					{
+						x: series.x,
+						y: series.y_pred,
+						mode: "lines+markers",
+						name: "Predicted yield (t/ha) — Test",
+						hovertemplate: "Week %{x}<br>Yield %{y:.2f} t/ha<extra></extra>",
+						yaxis: "y1"
+					},
+					{
+						x: series.x,
+						y: series.y_r2,
+						mode: "lines+markers",
+						name: "Adjusted R² — Test",
+						hovertemplate: "Week %{x}<br>Adj. R² %{y:.2f}<extra></extra>",
+						yaxis: "y2"
+					}
+					];
+
+					const layout = {
+					title: series.title,
+					margin: {l: 60, r: 60, t: 50, b: 50},
+					xaxis: { title: "Week (18–48)" },
+					yaxis: { title: "Predicted Yield (t/ha)", rangemode: "tozero" },
+					yaxis2: { title: "Adjusted R²", overlaying: "y", side: "right", rangemode: "tozero" },
+					legend: { orientation: "h", x: 0.5, xanchor: "center", y: 1.02 },
+					height: 420
+					};
+
+					Plotly.react(el, data, layout, {displayModeBar: true, responsive: true});
+				}
+
+				// One panel init (wires dropdowns + draws)
+				function initPanel(df, ids, defaults) {
+					const cropSel = document.getElementById(ids.crop);
+					const varSel  = document.getElementById(ids.variable);
+					const aggSel  = document.getElementById(ids.agg);
+					const unitSel = document.getElementById(ids.unit);
+
+					// Populate crops & variables from data
+					const crops = uniq(df.map(d => d.crop));
+					const vars  = uniq(df.map(d => d.variable));
+					fillSelect(cropSel, crops, { pretty: prettyCrop });
+					fillSelect(varSel, vars);
+
+					// Set aggregation default
+					aggSel.value = defaults.agg || "municipality";
+
+					// Populate units based on current aggregation
+					function refreshUnits() {
+					const agg = aggSel.value;
+					const units = uniq(df.filter(d => d.aggregation === agg).map(d => d.unit));
+					fillSelect(unitSel, units);
+					// Choose a stable default (first alphabetic), or provided default if valid
+					unitSel.value = (defaults.unit && units.includes(defaults.unit)) ? defaults.unit : units[0];
+					}
+					refreshUnits();
+
+					// Choose defaults for crop/variable if provided
+					if (defaults.crop && crops.includes(defaults.crop)) cropSel.value = defaults.crop;
+					if (defaults.variable && vars.includes(defaults.variable)) varSel.value = defaults.variable;
+
+					// Redraw when any control changes
+					function update() {
+					const s = getSeries(
+						df, cropSel.value, varSel.value, aggSel.value, unitSel.value
+					);
+					drawChart(ids.chart, s);
+					}
+
+					aggSel.addEventListener("change", () => { refreshUnits(); update(); });
+					cropSel.addEventListener("change", update);
+					varSel.addEventListener("change", update);
+					unitSel.addEventListener("change", update);
+
+					// Initial draw
+					update();
+				}
+
+				// Load CSV and bootstrap both panels
+				d3.csv(CSV_URL, d3.autoType).then(raw => {
+					// Normalize keys to strings and ensure required cols exist
+					const df = raw.map(d => ({
+					crop: String(d.crop || "").trim(),
+					variable: String(d.variable || "").trim(),
+					aggregation: String(d.aggregation || "").trim(),
+					unit: String(d.unit || "").trim(),
+					week: d.week,
+					set: String(d.set || "").trim(),
+					mean_pred_yield_test: d.mean_pred_yield_test,
+					r2_adj: d.r2_adj
+					}));
+
+					// PANEL A defaults
+					initPanel(df, {
+					crop: "crop-a", variable: "var-a", agg: "agg-a", unit: "unit-a", chart: "chart-a"
+					}, {
+					agg: "municipality"
+					});
+
+					// PANEL B defaults
+					initPanel(df, {
+					crop: "crop-b", variable: "var-b", agg: "agg-b", unit: "unit-b", chart: "chart-b"
+					}, {
+					agg: "region"
+					});
+				}).catch(err => {
+					console.error("Failed to load dashboard CSV:", err);
+					const warn = document.createElement("p");
+					warn.style.color = "crimson";
+					warn.textContent = "Failed to load dashboard data. Please ensure data/model_weekly_metrics_and_forecasts.csv exists.";
+					document.getElementById("panel-a").appendChild(warn);
+				});
+				})();
+			</script>
+
 			<script src="assets/js/jquery.min.js"></script>
 			<script src="assets/js/jquery.scrollex.min.js"></script>
 			<script src="assets/js/jquery.scrolly.min.js"></script>
