@@ -42,27 +42,76 @@
 					<article id="main">
 						<header>
 							<h2>
-							<img src="https://media.giphy.com/media/xT8qBepJQzUjJ2jKpC/giphy.gif" 
-								alt="Under construction">
+							<!-- <img src="https://media.giphy.com/media/xT8qBepJQzUjJ2jKpC/giphy.gif" 
+								alt="Under construction"> -->
 							<br>
-							🚧👷‍♀️ Under Construction 🚧👷‍♀️
+							
 							<br>
 							Commodity Yield Forecasting Dashboard
 							</h2>
 							<p>
-							Dashboard done entirely with open-source coding (Python) 🐍
+							See an example of my 
+							BI tools proficiency below. Dashboard done with random but realistic data. 
 							</p>
 						</header>
 						<section class="wrapper style5">
 							<div class="inner">
 
+								<h3>Aim of this tool</h3>
+								This dashboard is designed to support decision-making for commodity traders. 
+								It used weather + NDVI data to train and evaluate
+								statistical models that forecast annual yields for three commodities.
+								
+
+								<h3>How to use it</h3>
+
+<style>
+.cocoa-list {
+  list-style: none;         /* remove default bullets */
+  padding: 0;
+  margin: 0;
+}
+
+.cocoa-list li {
+  position: relative;
+  padding-left: 36px;       /* add space for emoji */
+  margin: 10px 0;
+  line-height: 1.6;         /* improves readability */
+  font-family: "Segoe UI", sans-serif;
+}
+
+.cocoa-list li::before {
+  content: "🍫";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);  /* vertically center emoji */
+  font-size: 22px;
+  line-height: 1;
+}
+</style>
+
+<ul class="cocoa-list">
+  <li>Compare models' performance accross: Crop, predictive variable, and geographical unit </li>
+  <li> Models used variable's recordings up until the week they were trained. Model on week 40 used information from weeks 18-40 </li>
+  <li>Zoom in by using left-click and drag --  zoom out with double left-click</li>
+  <li>Shaded regions denote crop stage</li>
+</ul>
+
+
+
 								<h3>Data disclaimer</h3>
-								<p>The data presented here is hypothetical. All data used to train models which output is displayed </br>
-								was generated virtually. However, the randomization was limited to realistic commodity yield bounds.</p>
+
+								The data presented here is hypothetical. All data used to train models which output is displayed below </br>
+								was generated virtually. However, the randomized data generation was limited to realistic bounds. Generative AI was used to develop this project. </p>
 
 								<!-- ====== Interactive Commodity Yield Forecasting Dashboard (Client-side) ====== -->
-								<h3 style="margin-top:2rem;">Interactive Dashboard (Client-side)</h3>
-								<p>This tool loads a precomputed CSV and updates the charts entirely in your browser. No server required.</p>
+								<h2 style="margin-top:2rem;">Interactive Dashboard (Client-side)</h2>
+								<p>
+									I designed this tool to load data stored in a precomputed CSV file 
+									with yield estimation at differen geographical levels. 
+									
+								</p>
 
 								<!-- Panel A controls -->
 								<div id="panel-a" class="dash-panel">
@@ -269,14 +318,42 @@
 						bgcolor: "rgba(255,255,255,0.0)"
 					}));
 				}
+				// --- Add this small helper (place above drawChart) ---
+				function paddedRange(values, padFrac = 0.08, minFloor = null, maxCeil = null) {
+					const clean = (values || []).map(Number).filter(v => Number.isFinite(v));
+					if (!clean.length) return [0, 1]; // safe fallback
+					const min = Math.min(...clean);
+					const max = Math.max(...clean);
+					if (min === max) {
+						// expand a flat range just a bit
+						const d = (Math.abs(min) || 1) * padFrac;
+						return [min - d, max + d];
+					}
+					const span = max - min;
+					let lo = min - span * padFrac;
+					let hi = max + span * padFrac;
+					if (minFloor !== null) lo = Math.max(lo, minFloor);
+					if (maxCeil  !== null) hi = Math.min(hi, maxCeil);
+					return [lo, hi];
+				}
+
+				// --- REPLACE your drawChart with this version ---
 				function drawChart(containerId, series) {
 					const el = document.getElementById(containerId);
+
+					// Compute adaptive ranges from the data shown
+					const xRange  = paddedRange(series.x, 0.04);                     // weeks
+					const y1Range = paddedRange(series.y_pred, 0.10, 0, null);       // yield ≥ 0
+					const y2Range = paddedRange(series.y_r2,  0.10, 0, 1);           // R² in [0,1]
+
 					const data = [
 						{
 						x: series.x,
 						y: series.y_pred,
 						mode: "lines+markers",
 						name: "Predicted yield (t/ha) — Test",
+						marker: { size: 9 },
+						line: { width: 3 },
 						hovertemplate: "Week %{x}<br>Yield %{y:.2f} t/ha<extra></extra>",
 						yaxis: "y1"
 						},
@@ -285,6 +362,8 @@
 						y: series.y_r2,
 						mode: "lines+markers",
 						name: "Adjusted R² — Test",
+						marker: { size: 9 },
+						line: { width: 3, dash: "dot" },
 						hovertemplate: "Week %{x}<br>Adj. R² %{y:.2f}<extra></extra>",
 						yaxis: "y2"
 						}
@@ -292,17 +371,24 @@
 
 					const layout = {
 						title: series.title,
-						margin: {l: 60, r: 60, t: 50, b: 50},
-						xaxis: { title: "Week (18–48)" },
-						yaxis:  { title: "Predicted Yield (t/ha)", rangemode: "tozero", showgrid: true, zeroline: false },
-						yaxis2: { title: "Adjusted R²", overlaying: "y", side: "right", rangemode: "tozero", showgrid: false, zeroline: false },
+						margin: { l: 70, r: 70, t: 60, b: 60 },
+						height: 520,
+						font: { size: 15 },
+
+						// Adaptive zoom to displayed data
+						xaxis:  { title: "Week", range: xRange, constrain: "range", fixedrange: false },
+						yaxis:  { title: "Predicted Yield (t/ha)", range: y1Range, showgrid: true, zeroline: false, rangemode: "normal" },
+						yaxis2: { title: "Adjusted R²", overlaying: "y", side: "right", range: y2Range, showgrid: false, zeroline: false, rangemode: "normal" },
+
 						legend: { orientation: "h", x: 0.5, xanchor: "center", y: -0.20 },
-						height: 420,
-						shapes: buildStageShapes(),     // green stage bands
-						annotations: buildStageLabels() // labels for each band
+
+						// Keep your stage shading & labels
+						shapes: buildStageShapes(),
+						annotations: buildStageLabels()
 					};
 
-					Plotly.react(el, data, layout, {displayModeBar: true, responsive: true});
+					// Render with interactive zoom still enabled
+					Plotly.react(el, data, layout, { displayModeBar: true, responsive: true });
 				}
 
 
