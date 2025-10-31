@@ -232,9 +232,9 @@
 				function buildStageDefs() {
 					// Tweak week ranges if you want different stages
 					return [
-						{ name: "Seeding",     from: 18, to: 24, color: "#e8f5e9" }, // lightest green
-						{ name: "Vegetative",  from: 24, to: 32, color: "#c8e6c9" },
-						{ name: "Flowering",   from: 32, to: 40, color: "#a5d6a7" },
+						{ name: "Seeding",     from: 18, to: 24, color: "#8a6708" }, // lightest green
+						{ name: "Vegetative",  from: 24, to: 32, color: "#c4b58b" },
+						{ name: "Flowering",   from: 32, to: 40, color: "#c8e6c9" },
 						{ name: "Pod filling", from: 40, to: 48, color: "#81c784" }  // darkest green
 					];
 				}
@@ -261,10 +261,10 @@
 						xref: "x",
 						yref: "paper",
 						x: (s.from + s.to) / 2,
-						y: 0.99,
+						y: 1.07,
 						text: s.name,
 						showarrow: false,
-						font: { size: 12, color: "#245b2a", family: "inherit" },
+						font: { size: 14, color: "#000000", family: "inherit" },
 						align: "center",
 						bgcolor: "rgba(255,255,255,0.0)"
 					}));
