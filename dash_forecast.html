@@ -161,23 +161,35 @@
 			<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 			<script>
 				(function() {
-				const CSV_URL = "../data/model_weekly_metrics_and_forecasts.csv"; // adjust if needed
-				const TEST_ONLY = true; // we only display the TEST set, as requested
+				// ---------- CONFIG ----------
+				const RELATIVE_CSV_PATH = "data/model_weekly_metrics_and_forecasts.csv";
+				const ADD_CACHE_BUSTER = true;  // set to false later if you prefer caching
+				// ----------------------------
+
+				// Resolve to an absolute URL so we know EXACTLY where we’re fetching from
+				const baseURL = document.baseURI || window.location.href;
+				let CSV_URL = new URL(RELATIVE_CSV_PATH, baseURL).href;
+				if (ADD_CACHE_BUSTER) {
+					const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+					CSV_URL += (CSV_URL.includes("?") ? "&" : "?") + "v=" + stamp;
+				}
+
+				// Debug: show exactly what/where we’re loading
+				console.log("[Dashboard] Page URL:", baseURL);
+				console.log("[Dashboard] Fetching CSV from:", CSV_URL);
+
+				const TEST_ONLY = true; // show only the TEST set
 
 				// Helpers
 				const uniq = arr => Array.from(new Set(arr)).sort();
 				const toFloat = v => (v === null || v === undefined || v === "" ? NaN : +v);
 
-				// Build options in a <select>
 				function fillSelect(selectEl, values, { pretty = (x)=>x } = {}) {
 					selectEl.innerHTML = values.map(v => `<option value="${v}">${pretty(v)}</option>`).join("");
 				}
-
-				// Pretty labels
 				const prettyCrop = c => c.replace(/_/g, " ").replace(/\b\w/g, m => m.toUpperCase());
 				const prettyAgg = a => a.charAt(0).toUpperCase() + a.slice(1);
 
-				// Filter & prepare series for one panel
 				function getSeries(df, crop, variable, aggregation, unit) {
 					let sub = df.filter(d =>
 					d.crop === crop &&
@@ -187,14 +199,11 @@
 					(!TEST_ONLY || d.set === "test")
 					);
 
-					// Coerce numeric
 					sub.forEach(d => {
 					d.week = +d.week;
 					d.mean_pred_yield_test = toFloat(d.mean_pred_yield_test);
-					d.r2_adj = Math.max(0, toFloat(d.r2_adj)); // clamp R² >= 0 (matches your requirement)
+					d.r2_adj = Math.max(0, toFloat(d.r2_adj)); // clamp R² >= 0
 					});
-
-					// Sort by week
 					sub.sort((a,b) => a.week - b.week);
 
 					return {
@@ -205,76 +214,60 @@
 					};
 				}
 
-				// Draw/update a dual-axis chart
 				function drawChart(containerId, series) {
 					const el = document.getElementById(containerId);
 					const data = [
 					{
-						x: series.x,
-						y: series.y_pred,
-						mode: "lines+markers",
+						x: series.x, y: series.y_pred, mode: "lines+markers",
 						name: "Predicted yield (t/ha) — Test",
 						hovertemplate: "Week %{x}<br>Yield %{y:.2f} t/ha<extra></extra>",
 						yaxis: "y1"
 					},
 					{
-						x: series.x,
-						y: series.y_r2,
-						mode: "lines+markers",
+						x: series.x, y: series.y_r2, mode: "lines+markers",
 						name: "Adjusted R² — Test",
 						hovertemplate: "Week %{x}<br>Adj. R² %{y:.2f}<extra></extra>",
 						yaxis: "y2"
 					}
 					];
-
 					const layout = {
 					title: series.title,
 					margin: {l: 60, r: 60, t: 50, b: 50},
 					xaxis: { title: "Week (18–48)" },
-					yaxis: { title: "Predicted Yield (t/ha)", rangemode: "tozero" },
+					yaxis:  { title: "Predicted Yield (t/ha)", rangemode: "tozero" },
 					yaxis2: { title: "Adjusted R²", overlaying: "y", side: "right", rangemode: "tozero" },
-					legend: { orientation: "h", x: 0.5, xanchor: "center", y: 1.02 },
+					legend: { orientation: "h", x: 0.5, xanchor: "center", y: -0.15 },
 					height: 420
 					};
-
 					Plotly.react(el, data, layout, {displayModeBar: true, responsive: true});
 				}
 
-				// One panel init (wires dropdowns + draws)
 				function initPanel(df, ids, defaults) {
 					const cropSel = document.getElementById(ids.crop);
 					const varSel  = document.getElementById(ids.variable);
 					const aggSel  = document.getElementById(ids.agg);
 					const unitSel = document.getElementById(ids.unit);
 
-					// Populate crops & variables from data
 					const crops = uniq(df.map(d => d.crop));
 					const vars  = uniq(df.map(d => d.variable));
 					fillSelect(cropSel, crops, { pretty: prettyCrop });
 					fillSelect(varSel, vars);
 
-					// Set aggregation default
 					aggSel.value = defaults.agg || "municipality";
 
-					// Populate units based on current aggregation
 					function refreshUnits() {
 					const agg = aggSel.value;
 					const units = uniq(df.filter(d => d.aggregation === agg).map(d => d.unit));
-					fillSelect(unitSel, units);
-					// Choose a stable default (first alphabetic), or provided default if valid
-					unitSel.value = (defaults.unit && units.includes(defaults.unit)) ? defaults.unit : units[0];
+					fillSelect(unitSel, units.length ? units : ["(none)"]);
+					unitSel.value = (defaults.unit && units.includes(defaults.unit)) ? defaults.unit : (units[0] || "(none)");
 					}
 					refreshUnits();
 
-					// Choose defaults for crop/variable if provided
 					if (defaults.crop && crops.includes(defaults.crop)) cropSel.value = defaults.crop;
 					if (defaults.variable && vars.includes(defaults.variable)) varSel.value = defaults.variable;
 
-					// Redraw when any control changes
 					function update() {
-					const s = getSeries(
-						df, cropSel.value, varSel.value, aggSel.value, unitSel.value
-					);
+					const s = getSeries(df, cropSel.value, varSel.value, aggSel.value, unitSel.value);
 					drawChart(ids.chart, s);
 					}
 
@@ -283,44 +276,47 @@
 					varSel.addEventListener("change", update);
 					unitSel.addEventListener("change", update);
 
-					// Initial draw
 					update();
 				}
 
-				// Load CSV and bootstrap both panels
-				d3.csv(CSV_URL, d3.autoType).then(raw => {
-					// Normalize keys to strings and ensure required cols exist
+				// Robust loader: fetch → text → d3.csvParse (with fallback if autoType is missing)
+				fetch(CSV_URL, { cache: "no-store" })
+					.then(resp => {
+					console.log("[Dashboard] CSV status:", resp.status, resp.statusText);
+					if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
+					return resp.text();
+					})
+					.then(text => {
+					// Use d3.csvParse for better error handling
+					const parser = (window.d3 && d3.csvParse) ? d3.csvParse : null;
+					if (!parser) throw new Error("d3.csvParse not available; check d3 script include.");
+					const autoType = (window.d3 && d3.autoType) ? d3.autoType : (d => d); // safe fallback
+
+					const raw = parser(text, autoType);
+					console.log("[Dashboard] Parsed rows:", raw.length);
+
 					const df = raw.map(d => ({
-					crop: String(d.crop || "").trim(),
-					variable: String(d.variable || "").trim(),
-					aggregation: String(d.aggregation || "").trim(),
-					unit: String(d.unit || "").trim(),
-					week: d.week,
-					set: String(d.set || "").trim(),
-					mean_pred_yield_test: d.mean_pred_yield_test,
-					r2_adj: d.r2_adj
+						crop: String(d.crop || "").trim(),
+						variable: String(d.variable || "").trim(),
+						aggregation: String(d.aggregation || "").trim(),
+						unit: String(d.unit || "").trim(),
+						week: d.week,
+						set: String(d.set || "").trim(),
+						mean_pred_yield_test: d.mean_pred_yield_test,
+						r2_adj: d.r2_adj
 					}));
 
-					// PANEL A defaults
-					initPanel(df, {
-					crop: "crop-a", variable: "var-a", agg: "agg-a", unit: "unit-a", chart: "chart-a"
-					}, {
-					agg: "municipality"
-					});
-
-					// PANEL B defaults
-					initPanel(df, {
-					crop: "crop-b", variable: "var-b", agg: "agg-b", unit: "unit-b", chart: "chart-b"
-					}, {
-					agg: "region"
-					});
-				}).catch(err => {
-					console.error("Failed to load dashboard CSV:", err);
+					// Init both panels
+					initPanel(df, { crop: "crop-a", variable: "var-a", agg: "agg-a", unit: "unit-a", chart: "chart-a" }, { agg: "municipality" });
+					initPanel(df, { crop: "crop-b", variable: "var-b", agg: "agg-b", unit: "unit-b", chart: "chart-b" }, { agg: "region" });
+					})
+					.catch(err => {
+					console.error("[Dashboard] Failed to load or parse CSV:", err);
 					const warn = document.createElement("p");
 					warn.style.color = "crimson";
-					warn.textContent = "Failed to load dashboard data. Please ensure data/model_weekly_metrics_and_forecasts.csv exists.";
+					warn.textContent = "Failed to load dashboard data. Check the console for details.";
 					document.getElementById("panel-a").appendChild(warn);
-				});
+					});
 				})();
 			</script>
 
