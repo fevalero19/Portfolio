@@ -31,6 +31,7 @@ footer, header, hgroup, menu, nav, section {
 
 body {
 	line-height: 1;
+	/* margin: 0; Other useless GPT suggestion */
 }
 
 ol, ul {
@@ -2682,8 +2683,12 @@ input, select, textarea {
 
 			.spotlight .image img {
 				border-radius: 0;
-				width: 80%;
-				height: auto;
+
+				/* ✨ Changed: let image scale to fill container cleanly */
+				display: block; /* ✨ removes inline gaps */
+				width: 70%; /* ✨ changed from 600px */
+				height: 100%; /* ✨ changed from auto */
+				object-fit: cover; /* ✨ image fills container while preserving aspect */
 			}
 
 		.spotlight .content {
@@ -2790,6 +2795,7 @@ input, select, textarea {
 
 	.wrapper {
 		padding: 6em 0 4em 0 ;
+		/* padding-left: 0; padding-right: 0; Useless gpt suggestion*/
 	}
 
 		.wrapper > .inner {
