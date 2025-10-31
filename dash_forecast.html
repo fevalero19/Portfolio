@@ -115,43 +115,58 @@
 								</div>
 
 								<style>
-								/* Minimal styling that blends with HTML5UP theme */
-								.dash-panel { margin: 1.5rem 0; }
-								.dash-panel .controls {
-									display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 10px;
-								}
-								.dash-panel label { font-weight: 600; color: #111; }
-								.dash-panel select {
-									margin-left: 6px; padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; color: #111;
-									background: #fff;
-								}
-								.chart { width: 100%; height: 420px; }
+								/* Dashboardf styling: Minimal styling that blends with HTML5UP theme */
+									.dash-panel { margin: 1.5rem 0; }
+									.dash-panel .controls {
+										display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 10px;
+									}
+									.dash-panel label { font-weight: 600; color: #111; }
+
+									/* Hide native select arrows & keep theme look */
+									.dash-panel select {
+										margin-left: 6px; padding: 6px 10px; border: 1px solid #ccc; border-radius: 6px;
+										color: #111; background: #fff;
+										appearance: none;           /* Standard */
+										-webkit-appearance: none;   /* Chrome/Safari */
+										-moz-appearance: none;      /* Firefox */
+										background-image: none;     /* Remove any default arrow */
+										background-position: right 8px center;
+										background-repeat: no-repeat;
+									}
+									/* Hide IE/Edge legacy arrow */
+									.dash-panel select::-ms-expand { display: none; }
+
+									.chart { width: 100%; height: 420px; }
 								</style>
-
-								<hr />
-
-								<h4>Feugiat aliquam</h4>
-								<p>Nam sapien ante, varius in pulvinar vitae, rhoncus id massa. Donec varius ex in mauris ornare, eget euismod urna egestas. Etiam lacinia tempor ipsum, sodales porttitor justo. Aliquam dolor quam, semper in tortor eu, volutpat efficitur quam. Fusce nec fermentum nisl. Aenean erat diam, tempus aliquet erat.</p>
-
-								<p>Etiam iaculis nulla ipsum, et pharetra libero rhoncus ut. Phasellus rutrum cursus velit, eget condimentum nunc blandit vel. In at pulvinar lectus. Morbi diam ante, vulputate et imperdiet eget, fermentum non dolor. Ut eleifend sagittis tincidunt. Sed viverra commodo mi, ac rhoncus justo. Duis neque ligula, elementum ut enim vel, posuere finibus justo. Vivamus facilisis maximus nibh quis pulvinar. Quisque hendrerit in ipsum id tellus facilisis fermentum. Proin mauris dui, at vestibulum sit amet, auctor bibendum neque.</p>
 
 							</div>
 						</section>
 					</article>
 
 				<!-- Footer -->
-					<footer id="footer">
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<ul class="copyright">
-							<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-						</ul>
-					</footer>
+				<footer id="footer">
+					<ul class="icons">
+						<!-- 
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+						-->
+						<li>
+							<a href="mailto:felipe.valero98@icloud.com" class="icon solid fa-envelope" title="Contact via email">
+								<span class="label">Email</span>
+							</a>
+						</li>
+					</ul>
+					<ul class="copyright">
+						<li>
+							&copy; Felipe Valero 
+						</li>
+						<li>
+							Design adapted from <a href="http://html5up.net" target="_blank" rel="noopener">HTML5 UP</a> template									<span> </span>
+						</li>
+					</ul>
+				</footer>
 
 			</div>
 
@@ -213,34 +228,83 @@
 					title: `${prettyCrop(crop)} | ${variable} | ${prettyAgg(aggregation)} [${unit || "All"}]`
 					};
 				}
+				// --- Crop stage shading helpers (weeks are adjustable) ---
+				function buildStageDefs() {
+					// Tweak week ranges if you want different stages
+					return [
+						{ name: "Seeding",     from: 18, to: 24, color: "#e8f5e9" }, // lightest green
+						{ name: "Vegetative",  from: 24, to: 32, color: "#c8e6c9" },
+						{ name: "Flowering",   from: 32, to: 40, color: "#a5d6a7" },
+						{ name: "Pod filling", from: 40, to: 48, color: "#81c784" }  // darkest green
+					];
+				}
 
+				function buildStageShapes() {
+					// Rectangles spanning the plot height (yref: 'paper' covers 0..1)
+					return buildStageDefs().map(s => ({
+						type: "rect",
+						xref: "x",
+						yref: "paper",
+						x0: s.from,
+						x1: s.to,
+						y0: 0,
+						y1: 1,
+						fillcolor: s.color,
+						opacity: 0.16,       // nice subtle tint
+						line: { width: 0 }   // no borders
+					}));
+				}
+
+				function buildStageLabels() {
+					// Place labels at the top center of each band
+					return buildStageDefs().map(s => ({
+						xref: "x",
+						yref: "paper",
+						x: (s.from + s.to) / 2,
+						y: 0.99,
+						text: s.name,
+						showarrow: false,
+						font: { size: 12, color: "#245b2a", family: "inherit" },
+						align: "center",
+						bgcolor: "rgba(255,255,255,0.0)"
+					}));
+				}
 				function drawChart(containerId, series) {
 					const el = document.getElementById(containerId);
 					const data = [
-					{
-						x: series.x, y: series.y_pred, mode: "lines+markers",
+						{
+						x: series.x,
+						y: series.y_pred,
+						mode: "lines+markers",
 						name: "Predicted yield (t/ha) — Test",
 						hovertemplate: "Week %{x}<br>Yield %{y:.2f} t/ha<extra></extra>",
 						yaxis: "y1"
-					},
-					{
-						x: series.x, y: series.y_r2, mode: "lines+markers",
+						},
+						{
+						x: series.x,
+						y: series.y_r2,
+						mode: "lines+markers",
 						name: "Adjusted R² — Test",
 						hovertemplate: "Week %{x}<br>Adj. R² %{y:.2f}<extra></extra>",
 						yaxis: "y2"
-					}
+						}
 					];
+
 					const layout = {
-					title: series.title,
-					margin: {l: 60, r: 60, t: 50, b: 50},
-					xaxis: { title: "Week (18–48)" },
-					yaxis:  { title: "Predicted Yield (t/ha)", rangemode: "tozero" },
-					yaxis2: { title: "Adjusted R²", overlaying: "y", side: "right", rangemode: "tozero" },
-					legend: { orientation: "h", x: 0.5, xanchor: "center", y: -0.15 },
-					height: 420
+						title: series.title,
+						margin: {l: 60, r: 60, t: 50, b: 50},
+						xaxis: { title: "Week (18–48)" },
+						yaxis:  { title: "Predicted Yield (t/ha)", rangemode: "tozero", showgrid: true, zeroline: false },
+						yaxis2: { title: "Adjusted R²", overlaying: "y", side: "right", rangemode: "tozero", showgrid: false, zeroline: false },
+						legend: { orientation: "h", x: 0.5, xanchor: "center", y: -0.20 },
+						height: 420,
+						shapes: buildStageShapes(),     // green stage bands
+						annotations: buildStageLabels() // labels for each band
 					};
+
 					Plotly.react(el, data, layout, {displayModeBar: true, responsive: true});
 				}
+
 
 				function initPanel(df, ids, defaults) {
 					const cropSel = document.getElementById(ids.crop);
