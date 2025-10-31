@@ -185,7 +185,7 @@
 				const baseURL = document.baseURI || window.location.href;
 				let CSV_URL = new URL(RELATIVE_CSV_PATH, baseURL).href;
 				if (ADD_CACHE_BUSTER) {
-					const stamp = new Date().toISOString().slice(0,10).replace(/-/g,'');
+					const stamp = Date.now(); // unique each refresh
 					CSV_URL += (CSV_URL.includes("?") ? "&" : "?") + "v=" + stamp;
 				}
 
@@ -216,14 +216,14 @@
 
 					sub.forEach(d => {
 					d.week = +d.week;
-					d.mean_pred_yield_test = toFloat(d.mean_pred_yield_test);
+					d.mean_pred_yield_t_ha = toFloat(d.mean_pred_yield_t_ha);
 					d.r2_adj = Math.max(0, toFloat(d.r2_adj)); // clamp R² >= 0
 					});
 					sub.sort((a,b) => a.week - b.week);
 
 					return {
 					x: sub.map(d => d.week),
-					y_pred: sub.map(d => d.mean_pred_yield_test),
+					y_pred: sub.map(d => d.mean_pred_yield_t_ha),
 					y_r2: sub.map(d => isFinite(d.r2_adj) ? d.r2_adj : 0),
 					title: `${prettyCrop(crop)} | ${variable} | ${prettyAgg(aggregation)} [${unit || "All"}]`
 					};
@@ -366,7 +366,7 @@
 						unit: String(d.unit || "").trim(),
 						week: d.week,
 						set: String(d.set || "").trim(),
-						mean_pred_yield_test: d.mean_pred_yield_test,
+						mean_pred_yield_t_ha: d.mean_pred_yield_t_ha,
 						r2_adj: d.r2_adj
 					}));
 
