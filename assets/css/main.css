@@ -2678,7 +2678,12 @@ input, select, textarea {
 			-ms-order: 1;
 			order: 1;
 			border-radius: 0;
-			width: 40%;
+			width: 40%; /* before: 40%*/
+			height: 450px
+		}
+		.spotlight .image.large { /* For landscape-styled images*/
+		width: 85%;   /* adjust to taste */
+		height: 100%
 		}
 
 			.spotlight .image img {
@@ -2686,7 +2691,7 @@ input, select, textarea {
 
 				/* ✨ Changed: let image scale to fill container cleanly */
 				display: block; /* ✨ removes inline gaps */
-				width: 70%; /* ✨ changed from 600px */
+				width: 100%; /* ✨ changed from 600px (later 70%) */
 				height: 100%; /* ✨ changed from auto */
 				object-fit: cover; /* ✨ image fills container while preserving aspect */
 			}
