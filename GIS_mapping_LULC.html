@@ -11,6 +11,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 	</head>
 	<body class="is-preload">
 
@@ -42,8 +44,8 @@
 				<!-- Main -->
 					<article id="main">
 						<header>
-							<h2>Land Use Change over 2020 example</h2>
-							<p>Find below a timelapse demonstration of Land Use Change I did</p>
+							<h2>Land Use Change over 2020</h2>
+							<p>Find below a timelapse demonstration of Land Use Change I did with GenAI</p>
 						</header>
 						<section class="wrapper style5">
 							<div class="inner">
@@ -58,17 +60,17 @@
 										World Land Use classification datasets are available to the public. That type of data is vital to understand
 										what we are doing with Earth, at what pace, and what could be the consequences of it. 
 									</p>
-									<h5>Blockquote</h5>
+									<h5>On maps</h5>
 									<blockquote>
 										A map does not just chart, it unlocks and formulates meaning; it forms bridges between here and there, between disparate ideas that we did not know were previously connected.
 										- Reif Larsen, The Selected Works of T.S. Spivet
 									</blockquote>	
 									<h4>
-										Aim of this Page
+										One day project
 									</h4>
 									<p>
 										I retrieved monthly data from the World View dataset for the year 2020 at a Region of Interest centered in 
-										Aarhus, Denmark, and visualized it on a short video. 
+										Aarhus, Denmark, and visualized it using a horizontal timelapse slider. 
 									</p>
 									<h4>
 										Data description and Limitations
@@ -77,20 +79,55 @@
 										publicly available on Google's Earth Engine Data Catalogue. Data was restricted to the ROI shown below:
 
 									</p>
-									<div class="image">
-										<img src="images/roi_aarhus_dk.jpg" alt="" />
-										<figcaption>Figure 1. ROI Around Aarhus, Denmark.</figcaption>
-									</div><div class="content"></div>
-
+									<div class="image" style="text-align:center;">
+										<img src="images/roi_aarhus_dk.jpg" alt="" style="width:50%; display:block; margin:auto;" />
+										<figcaption style="text-align:center;">Figure 1. ROI Around Aarhus, Denmark.</figcaption>
+									</div>
+									<!-- 
 									Monthly Land Use maps were taken from World View's Land Use database. The output is shown below:
 									<div class="image">
 										<video controls>
 											<source src="images/Aarhus_LULC_DW_2020_monthly.mp4" type="video/mp4">
 										</video>
+									</div> -->
+
+									<!-- Starting timelapse slider here -->
+									<h2>Timelapse slider for land use change</h2>
+									<p>
+										Find below a fast visualization of Land Use mapping throughout 2020 around Aarhus, Denmark. 
+										Black spots where areas where no data could be retrieved from the Sentinel-2 SR Harmonized
+										dataset for that specific year
+									</p>
+									<h3 id="lulcMonthLabel">February 2020</h3>
+
+									<div id="lulcMap" style="height:520px;"></div>
+
+									<div style="margin-top:12px;display:flex;gap:10px;align-items:center;">
+									<button id="lulcPlayBtn">▶ Play</button>
+
+									<input id="lulcSlider" type="range" min="2" max="12" value="2" step="1"
+											style="flex:1;height:14px;border:3px solid #333;">
+
+									<b><span id="lulcMonthNum">02</span>/12</b>
 									</div>
-									
-									
-									<h5>Preformatted</h5>
+
+									<h4 style="margin-top:18px;">Legend</h4>
+
+									<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;font-size:14px;">
+									<div><span style="background:#419BDF;width:14px;height:14px;display:inline-block;"></span> Water</div>
+									<div><span style="background:#397D49;width:14px;height:14px;display:inline-block;"></span> Trees</div>
+									<div><span style="background:#88B053;width:14px;height:14px;display:inline-block;"></span> Grass</div>
+									<div><span style="background:#7A87C6;width:14px;height:14px;display:inline-block;"></span> Flooded vegetation</div>
+									<div><span style="background:#E49635;width:14px;height:14px;display:inline-block;"></span> Crops</div>
+									<div><span style="background:#DFC35A;width:14px;height:14px;display:inline-block;"></span> Shrub & scrub</div>
+									<div><span style="background:#C4281B;width:14px;height:14px;display:inline-block;"></span> Built area</div>
+									<div><span style="background:#A59B8F;width:14px;height:14px;display:inline-block;"></span> Bare ground</div>
+									<div><span style="background:#B39FE1;width:14px;height:14px;display:inline-block;"></span> Snow & ice</div>
+									</div>
+
+									<!-- End timelapse slider section -->
+
+									<!-- <h5>Preformatted</h5>
 									<pre>
 										<code>i = 0;
 
@@ -102,296 +139,34 @@
 
 										print 'It took ' + i + ' iterations to sort the deck.';
 										</code>
-									</pre>
+									</pre> -->
 								</section>
-
-								<section>
-									<h4>Lists</h4>
-									<div class="row">
-										<div class="col-6 col-12-medium">
-											<h5>Unordered</h5>
-											<ul>
-												<li>Dolor pulvinar etiam.</li>
-												<li>Sagittis adipiscing.</li>
-												<li>Felis enim feugiat.</li>
-											</ul>
-											<h5>Alternate</h5>
-											<ul class="alt">
-												<li>Dolor pulvinar etiam.</li>
-												<li>Sagittis adipiscing.</li>
-												<li>Felis enim feugiat.</li>
-											</ul>
-										</div>
-										<div class="col-6 col-12-medium">
-											<h5>Ordered</h5>
-											<ol>
-												<li>Dolor pulvinar etiam.</li>
-												<li>Etiam vel felis viverra.</li>
-												<li>Felis enim feugiat.</li>
-												<li>Dolor pulvinar etiam.</li>
-												<li>Etiam vel felis lorem.</li>
-												<li>Felis enim et feugiat.</li>
-											</ol>
-											<h5>Icons</h5>
-											<ul class="icons">
-												<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-												<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-												<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-												<li><a href="#" class="icon brands fa-github"><span class="label">Github</span></a></li>
-											</ul>
-										</div>
-									</div>
-									<h5>Actions</h5>
-									<div class="row">
-										<div class="col-6 col-12-medium">
-											<ul class="actions">
-												<li><a href="#" class="button primary">Default</a></li>
-												<li><a href="#" class="button">Default</a></li>
-											</ul>
-											<ul class="actions small">
-												<li><a href="#" class="button primary small">Small</a></li>
-												<li><a href="#" class="button small">Small</a></li>
-											</ul>
-											<ul class="actions stacked">
-												<li><a href="#" class="button primary">Default</a></li>
-												<li><a href="#" class="button">Default</a></li>
-											</ul>
-											<ul class="actions stacked">
-												<li><a href="#" class="button primary small">Small</a></li>
-												<li><a href="#" class="button small">Small</a></li>
-											</ul>
-										</div>
-										<div class="col-6 col-12-medium">
-											<ul class="actions stacked">
-												<li><a href="#" class="button primary fit">Default</a></li>
-												<li><a href="#" class="button fit">Default</a></li>
-											</ul>
-											<ul class="actions stacked">
-												<li><a href="#" class="button primary small fit">Small</a></li>
-												<li><a href="#" class="button small fit">Small</a></li>
-											</ul>
-										</div>
-									</div>
-								</section>
-
-								<section>
-									<h4>Table</h4>
-									<h5>Default</h5>
-									<div class="table-wrapper">
-										<table>
-											<thead>
-												<tr>
-													<th>Name</th>
-													<th>Description</th>
-													<th>Price</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>Item One</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-													<td>29.99</td>
-												</tr>
-												<tr>
-													<td>Item Two</td>
-													<td>Vis ac commodo adipiscing arcu aliquet.</td>
-													<td>19.99</td>
-												</tr>
-												<tr>
-													<td>Item Three</td>
-													<td> Morbi faucibus arcu accumsan lorem.</td>
-													<td>29.99</td>
-												</tr>
-												<tr>
-													<td>Item Four</td>
-													<td>Vitae integer tempus condimentum.</td>
-													<td>19.99</td>
-												</tr>
-												<tr>
-													<td>Item Five</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-													<td>29.99</td>
-												</tr>
-											</tbody>
-											<tfoot>
-												<tr>
-													<td colspan="2"></td>
-													<td>100.00</td>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-
-									<h5>Alternate</h5>
-									<div class="table-wrapper">
-										<table class="alt">
-											<thead>
-												<tr>
-													<th>Name</th>
-													<th>Description</th>
-													<th>Price</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>Item One</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-													<td>29.99</td>
-												</tr>
-												<tr>
-													<td>Item Two</td>
-													<td>Vis ac commodo adipiscing arcu aliquet.</td>
-													<td>19.99</td>
-												</tr>
-												<tr>
-													<td>Item Three</td>
-													<td> Morbi faucibus arcu accumsan lorem.</td>
-													<td>29.99</td>
-												</tr>
-												<tr>
-													<td>Item Four</td>
-													<td>Vitae integer tempus condimentum.</td>
-													<td>19.99</td>
-												</tr>
-												<tr>
-													<td>Item Five</td>
-													<td>Ante turpis integer aliquet porttitor.</td>
-													<td>29.99</td>
-												</tr>
-											</tbody>
-											<tfoot>
-												<tr>
-													<td colspan="2"></td>
-													<td>100.00</td>
-												</tr>
-											</tfoot>
-										</table>
-									</div>
-								</section>
-
-								<section>
-									<h4>Buttons</h4>
-									<ul class="actions">
-										<li><a href="#" class="button primary">Primary</a></li>
-										<li><a href="#" class="button">Default</a></li>
-									</ul>
-									<ul class="actions">
-										<li><a href="#" class="button large">Large</a></li>
-										<li><a href="#" class="button">Default</a></li>
-										<li><a href="#" class="button small">Small</a></li>
-									</ul>
-									<ul class="actions fit">
-										<li><a href="#" class="button fit">Fit</a></li>
-										<li><a href="#" class="button primary fit">Fit</a></li>
-										<li><a href="#" class="button fit">Fit</a></li>
-									</ul>
-									<ul class="actions fit small">
-										<li><a href="#" class="button primary fit small">Fit + Small</a></li>
-										<li><a href="#" class="button fit small">Fit + Small</a></li>
-										<li><a href="#" class="button primary fit small">Fit + Small</a></li>
-									</ul>
-									<ul class="actions">
-										<li><a href="#" class="button primary icon solid fa-download">Icon</a></li>
-										<li><a href="#" class="button icon solid fa-download">Icon</a></li>
-									</ul>
-									<ul class="actions">
-										<li><span class="button primary disabled">Disabled</span></li>
-										<li><span class="button disabled">Disabled</span></li>
-									</ul>
-								</section>
-
-								<section>
-									<h4>Form</h4>
-									<form method="post" action="#">
-										<div class="row gtr-uniform">
-											<div class="col-6 col-12-xsmall">
-												<input type="text" name="demo-name" id="demo-name" value="" placeholder="Name" />
-											</div>
-											<div class="col-6 col-12-xsmall">
-												<input type="email" name="demo-email" id="demo-email" value="" placeholder="Email" />
-											</div>
-											<div class="col-12">
-												<select name="demo-category" id="demo-category">
-													<option value="">- Category -</option>
-													<option value="1">Manufacturing</option>
-													<option value="1">Shipping</option>
-													<option value="1">Administration</option>
-													<option value="1">Human Resources</option>
-												</select>
-											</div>
-											<div class="col-4 col-12-small">
-												<input type="radio" id="demo-priority-low" name="demo-priority" checked>
-												<label for="demo-priority-low">Low</label>
-											</div>
-											<div class="col-4 col-12-small">
-												<input type="radio" id="demo-priority-normal" name="demo-priority">
-												<label for="demo-priority-normal">Normal</label>
-											</div>
-											<div class="col-4 col-12-small">
-												<input type="radio" id="demo-priority-high" name="demo-priority">
-												<label for="demo-priority-high">High</label>
-											</div>
-											<div class="col-6 col-12-small">
-												<input type="checkbox" id="demo-copy" name="demo-copy">
-												<label for="demo-copy">Email me a copy</label>
-											</div>
-											<div class="col-6 col-12-small">
-												<input type="checkbox" id="demo-human" name="demo-human" checked>
-												<label for="demo-human">Not a robot</label>
-											</div>
-											<div class="col-12">
-												<textarea name="demo-message" id="demo-message" placeholder="Enter your message" rows="6"></textarea>
-											</div>
-											<div class="col-12">
-												<ul class="actions">
-													<li><input type="submit" value="Send Message" class="primary" /></li>
-													<li><input type="reset" value="Reset" /></li>
-												</ul>
-											</div>
-										</div>
-									</form>
-								</section>
-
-								<section>
-									<h4>Image</h4>
-									<h5>Fit</h5>
-									<div class="box alt">
-										<div class="row gtr-50 gtr-uniform">
-											<div class="col-12"><span class="image fit"><img src="images/banner.jpg" alt="" /></span></div>
-											<div class="col-4"><span class="image fit"><img src="images/pic01.jpg" alt="" /></span></div>
-											<div class="col-4"><span class="image fit"><img src="images/pic02.jpg" alt="" /></span></div>
-											<div class="col-4"><span class="image fit"><img src="images/pic03.jpg" alt="" /></span></div>
-											<div class="col-4"><span class="image fit"><img src="images/pic03.jpg" alt="" /></span></div>
-											<div class="col-4"><span class="image fit"><img src="images/pic02.jpg" alt="" /></span></div>
-											<div class="col-4"><span class="image fit"><img src="images/pic01.jpg" alt="" /></span></div>
-											<div class="col-4"><span class="image fit"><img src="images/pic02.jpg" alt="" /></span></div>
-											<div class="col-4"><span class="image fit"><img src="images/pic01.jpg" alt="" /></span></div>
-											<div class="col-4"><span class="image fit"><img src="images/pic03.jpg" alt="" /></span></div>
-										</div>
-									</div>
-									<h5>Left &amp; Right</h5>
-									<p><span class="image left"><img src="images/pic04.jpg" alt="" /></span>Morbi mattis mi consectetur tortor elementum, varius pellentesque velit convallis. Aenean tincidunt lectus auctor mauris maximus, ac scelerisque ipsum tempor. Duis vulputate ex et ex tincidunt, quis lacinia velit aliquet. Duis non efficitur nisi, id malesuada justo. Maecenas sagittis felis ac sagittis semper. Curabitur purus leo, tempus sed finibus eget, fringilla quis risus. Maecenas et lorem quis sem varius sagittis et a est. Maecenas iaculis iaculis sem. Donec vel dolor at arcu tincidunt bibendum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce ut aliquet justo. Donec id neque ipsum. Integer eget ultricies odio. Nam vel ex a orci fringilla tincidunt. Aliquam eleifend ligula non velit accumsan cursus. Etiam ut gravida sapien. Morbi mattis mi consectetur tortor elementum, varius pellentesque velit convallis. Aenean tincidunt lectus auctor mauris maximus, ac scelerisque ipsum tempor. Duis vulputate ex et ex tincidunt, quis lacinia velit aliquet. Duis non efficitur nisi, id malesuada justo. Maecenas sagittis felis ac sagittis semper. Curabitur purus leo, tempus sed finibus eget, fringilla quis risus. Maecenas et lorem quis sem varius sagittis et a est. Maecenas iaculis iaculis sem. Donec vel dolor at arcu tincidunt bibendum. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce ut aliquet justo. Donec id neque ipsum. Integer eget ultricies odio. Nam vel ex a orci fringilla tincidunt. Aliquam eleifend ligula non velit accumsan cursus. Etiam ut gravida sapien.</p>
-									<p><span class="image right"><img src="images/pic05.jpg" alt="" /></span>Vestibulum ultrices risus velit, sit amet blandit massa auctor sit amet. Sed eu lectus sem. Phasellus in odio at ipsum porttitor mollis id vel diam. Praesent sit amet posuere risus, eu faucibus lectus. Vivamus ex ligula, tempus pulvinar ipsum in, auctor porta quam. Proin nec dui cursus, posuere dui eget interdum. Fusce lectus magna, sagittis at facilisis vitae, pellentesque at etiam. Quisque posuere leo quis sem commodo, vel scelerisque nisi scelerisque. Suspendisse id quam vel tortor tincidunt suscipit. Nullam auctor orci eu dolor consectetur, interdum ullamcorper ante tincidunt. Mauris felis nec felis elementum varius. Nam sapien ante, varius in pulvinar vitae, rhoncus id massa. Donec varius ex in mauris ornare, eget euismod urna egestas. Etiam lacinia tempor ipsum, sodales porttitor justo. Aliquam dolor quam, semper in tortor eu, volutpat efficitur quam. Fusce nec fermentum nisl. Aenean erat diam, tempus aliquet erat. Etiam iaculis nulla ipsum, et pharetra libero rhoncus ut. Phasellus rutrum cursus velit, eget condimentum nunc blandit vel. In at pulvinar lectus. Morbi diam ante, vulputate et imperdiet eget, fermentum non dolor. Ut eleifend sagittis tincidunt. Sed viverra commodo mi, ac rhoncus justo. Duis neque ligula, elementum ut enim vel, posuere finibus justo. Vivamus facilisis maximus nibh quis pulvinar. Quisque hendrerit in ipsum id tellus facilisis fermentum. Proin mauris dui.</p>
-								</section>
-
-							</div>
+							</div>	
 						</section>
 					</article>
 
 				<!-- Footer -->
-					<footer id="footer">
-						<ul class="icons">
-							<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
-							<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
-							<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
-							<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
-							<li><a href="#" class="icon solid fa-envelope"><span class="label">Email</span></a></li>
-						</ul>
-						<ul class="copyright">
-							<li>&copy; Untitled</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-						</ul>
-					</footer>
-
+				<footer id="footer">
+					<ul class="icons">
+						<!-- 
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+						-->
+						<li><a href="mailto:felipe.valero98@icloud.com" class="icon solid fa-envelope" title="Contact via email"><span class="label">Email</span></a></li>
+						<li><a href="https://www.linkedin.com/in/wfelipevalero/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>
+							&copy; Felipe Valero 
+						</li>
+						<li>
+							Design adapted from <a href="http://html5up.net" target="_blank" rel="noopener">HTML5 UP</a> template									<span> </span>
+						</li>
+					</ul>
+				</footer>
+				</div>
 			</div>
 
 		<!-- Scripts -->
@@ -402,6 +177,147 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script>
+			(function () {
+			// --- Fix Spectral/HTML5UP global img rules breaking Leaflet tiles ---
+			var style = document.createElement('style');
+			style.textContent = `
+				#lulcMap .leaflet-container img,
+				#lulcMap .leaflet-tile {
+				max-width: none !important;
+				max-height: none !important;
+				}
+			`;
+			document.head.appendChild(style);
 
+			// --- Config ---
+			const FRAME_DIR = "frames";
+			const YEAR = 2020;
+
+			// [southWest(lat,lon), northEast(lat,lon)]
+			const OVERLAY_BOUNDS = [
+				[56.0958232837335, 10.004180894454803],
+				[56.281518909925296, 10.460113580293296]
+			];
+
+			const START_MONTH = 2; // February
+			const END_MONTH = 12;
+			const FPS = 2;         // autoplay speed
+
+			// --- DOM ---
+			const slider = document.getElementById("lulcSlider");
+			const playBtn = document.getElementById("lulcPlayBtn");
+			const label = document.getElementById("lulcMonthLabel");
+			const num = document.getElementById("lulcMonthNum");
+			const mapEl = document.getElementById("lulcMap");
+
+			if (!slider || !playBtn || !label || !num || !mapEl) return;
+			if (typeof L === "undefined") {
+				console.error("Leaflet (L) not found. Make sure leaflet.js is loaded in <head>.");
+				return;
+			}
+
+			// Ensure slider reflects desired range
+			slider.min = String(START_MONTH);
+			slider.max = String(END_MONTH);
+			slider.value = String(START_MONTH);
+
+			function pad(n){ return String(n).padStart(2,'0'); }
+			function monthName(n){
+				return ["January","February","March","April","May","June",
+						"July","August","September","October","November","December"][n-1];
+			}
+			function frame(m){
+				return `${FRAME_DIR}/Aarhus_DW_RGB_${YEAR}_${pad(m)}.png`;
+			}
+
+			// --- Map ---
+			const map = L.map("lulcMap", { scrollWheelZoom: false });
+
+			L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+				maxZoom: 19,
+				attribution: "&copy; OpenStreetMap contributors"
+			}).addTo(map);
+
+			const bounds = L.latLngBounds(
+				L.latLng(OVERLAY_BOUNDS[0][0], OVERLAY_BOUNDS[0][1]),
+				L.latLng(OVERLAY_BOUNDS[1][0], OVERLAY_BOUNDS[1][1])
+			);
+			map.fitBounds(bounds);
+
+			// Two overlays for cross-fade
+			let A = L.imageOverlay(frame(START_MONTH), bounds, { opacity: 1 }).addTo(map);
+			let B = L.imageOverlay(frame(START_MONTH), bounds, { opacity: 0 }).addTo(map);
+			let top = true;
+			let fadeTimer = null;
+
+			// Preload frames (optional but smooth)
+			for (let m = START_MONTH; m <= END_MONTH; m++) {
+				const im = new Image();
+				im.src = frame(m);
+			}
+
+			function setMonth(m){
+				m = Number(m);
+				label.textContent = `${monthName(m)} ${YEAR}`;
+				num.textContent = pad(m);
+
+				const next = top ? B : A;
+				const prev = top ? A : B;
+
+				// stop any in-progress fade
+				if (fadeTimer) { clearInterval(fadeTimer); fadeTimer = null; }
+
+				next.setUrl(frame(m));
+
+				let i = 0;
+				const steps = 18; // a bit faster
+				fadeTimer = setInterval(() => {
+				i++;
+				const t = i / steps;
+				next.setOpacity(t);
+				prev.setOpacity(1 - t);
+				if (i >= steps) {
+					clearInterval(fadeTimer);
+					fadeTimer = null;
+					top = !top;
+				}
+				}, 20);
+
+				slider.value = String(m);
+			}
+
+			slider.addEventListener("input", (e) => setMonth(e.target.value));
+
+			// Autoplay
+			let playing = false;
+			let timer = null;
+
+			function nextMonth(m){
+				m = Number(m) + 1;
+				if (m > END_MONTH) m = START_MONTH;
+				return m;
+			}
+
+			playBtn.addEventListener("click", () => {
+				playing = !playing;
+				playBtn.textContent = playing ? "⏸ Pause" : "▶ Play";
+
+				if (playing) {
+					timer = setInterval(() => {
+						const m = nextMonth(slider.value);
+						setMonth(m);
+					}, 3000 / FPS);
+					} else {
+					if (timer) clearInterval(timer);
+					timer = null;
+				}
+			});
+
+			// Init at February
+			setMonth(START_MONTH);
+			})();
+			</script>
+	
 	</body>
 </html>
