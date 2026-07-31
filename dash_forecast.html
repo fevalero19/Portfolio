@@ -58,56 +58,77 @@
 						<section class="wrapper style5">
 							<div class="inner">
 
-								<h3>Aim of this tool</h3>
-								This dashboard is designed to support decision-making for commodity traders. 
-								It used weather + NDVI data to train and evaluate
-								statistical models that forecast annual yields for three commodities.
-								
-
-								<h3>How to use it</h3>
-
-<style>
-.cocoa-list {
-  list-style: none;         /* remove default bullets */
-  padding: 0;
-  margin: 0;
-}
-
-.cocoa-list li {
-  position: relative;
-  padding-left: 36px;       /* add space for emoji */
-  margin: 10px 0;
-  line-height: 1.6;         /* improves readability */
-  font-family: "Segoe UI", sans-serif;
-}
-
-.cocoa-list li::before {
-  content: "🍫";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);  /* vertically center emoji */
-  font-size: 22px;
-  line-height: 1;
-}
-</style>
-
-<ul class="cocoa-list">
-  <li>Compare models' performance accross: Crop, predictive variable, and geographical unit </li>
-  <li> Models used variable's recordings up until the week they were trained. Model on week 40 used information from weeks 18-40 </li>
-  <li>Zoom in by using left-click and drag --  zoom out with double left-click</li>
-  <li>Shaded regions denote crop stage</li>
-</ul>
-
-
-
 								<h3>Data disclaimer</h3>
 
 								The data presented here is hypothetical. All data used to train models which output is displayed below </br>
 								was generated virtually. However, the randomized data generation was limited to realistic bounds. Generative AI was used to develop this project. </p>
 
+								<h2 style="margin-top:2rem;">The type of data to work with</h2>
+								<p>
+									When working with remotely sensed data, contextual information on cropland, 
+									soil conditions, and weather patterns is essential for accurate yield forecasting.
+
+									NDVI alone can be a good predictor of crop health, but complementing it with other variables such as precipitation, 
+									temperature, and soil moisture can significantly enhance model performance.
+
+									NDVI calculations for given cropland can be retrieved using Google Earth Engine (GEE) or other remote sensing platforms.
+									See below an example using Sentinel-2 imagery.
+								</p>
+								
+								<h3>Aim of this tool</h3>
+
+								This dashboard is designed to support decision-making for commodity traders. 
+								It used weather + NDVI data to train and evaluate
+								statistical models that forecast annual yields for three commodities. First, see an example 
+								of where the NDVI comes from. Then see how it could be translated into a dashboard that allows users 
+								to compare models' performance accross: Crop, predictive variable, and geographical unit. </p>
+
+								<div class="image"><img src="images/first_forecaster.jpg" alt="" style="max-width: 800px; width: 100%; height: auto;"></div>
+
+								<div class="image"><img src="images/second_forecaster.jpg" alt="" style="max-width: 800px; width: 100%; height: auto;"></div>
+
+								<p>
+								Following the display of selected municipality/county (light blue), and cropland (green), a weekly
+								estimate of yield can be calculated with a degree of accuracy (R2) per regressor (NDVI) like shown below at client-side Dashboard.
+								</p>
+
+								<h3>Highlights of this tool</h3>
+
+								<style>
+								.cocoa-list {
+								list-style: none;         /* remove default bullets */
+								padding: 0;
+								margin: 0;
+								}
+
+								.cocoa-list li {
+								position: relative;
+								padding-left: 36px;       /* add space for emoji */
+								margin: 10px 0;
+								line-height: 1.6;         /* improves readability */
+								font-family: "Segoe UI", sans-serif;
+								}
+
+								.cocoa-list li::before {
+								content: "🍫";
+								position: absolute;
+								left: 0;
+								top: 50%;
+								transform: translateY(-50%);  /* vertically center emoji */
+								font-size: 22px;
+								line-height: 1;
+								}
+								</style>
+
+								<ul class="cocoa-list">
+								<li>Compare models' performance accross: Crop, predictive variable, and geographical unit </li>
+								<li> Models used variable's recordings up until the week they were trained. Model on week 40 used information from weeks 18-40 </li>
+								<li>Zoom in by using left-click and drag --  zoom out with double left-click</li>
+								<li>Shaded regions denote crop stage</li>
+								</ul>
+								
 								<!-- ====== Interactive Commodity Yield Forecasting Dashboard (Client-side) ====== -->
-								<h2 style="margin-top:2rem;">Interactive Dashboard (Client-side)</h2>
+								<h2 style="margin-top:2rem;">Client-side Interactive Dashboard</h2>
 								<p>
 									I designed this tool to load data stored in a precomputed CSV file 
 									with yield estimation at differen geographical levels. 
