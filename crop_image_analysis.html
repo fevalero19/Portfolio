@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<!--
+	Spectral by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Felipe Valero analyst</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Page Wrapper -->
+			<div id="page-wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<h1><a href="index.html">Felipe Valero</a></h1>
+						<nav id="nav">
+							<ul>
+								<li class="special">
+									<a href="#menu" class="menuToggle"><span>Menu</span></a>
+									<div id="menu">
+										<ul>
+											<li><a href="index.html">Home</a></li>
+											<li><a href="dash_forecast.html">Dashboard for commodity yield forecasting</a></li>
+											<li><a href="GIS_mapping_LULC.html">Earth Observation tool for Land Use </a></li>
+											<li><a href="crop_image_analysis.html">Crop Image Analysis</a></li>
+											<!-- <li><a href="education.html">Education</a></li> -->
+											<!-- <li><a href="#">Sign Up</a></li> -->
+											<!-- <li><a href="#">Log In</a></li> -->
+										</ul>
+									</div>
+								</li>
+							</ul>
+						</nav>
+					</header>
+
+				<!-- Main -->
+					<article id="main">
+						<header>
+							<h2>
+							<!-- <img src="https://media.giphy.com/media/xT8qBepJQzUjJ2jKpC/giphy.gif" 
+								alt="Under construction"> -->
+							<br>
+							
+							<br>
+							Image analysis pipeline to assess crop health
+							</h2>
+							<p>
+							See an example of my 
+							GIS tools proficiency below. Pilot project on avocado cropland
+							</p>
+						</header>
+						<section class="wrapper style5">
+							<div class="inner">
+
+								<h2 style="margin-top:2rem;">The type of data to work with</h2>
+								<p>
+									When working with remotely sensed data, contextual information on cropland, 
+									soil conditions, and weather patterns is essential for accurate yield forecasting.
+
+									Aerial imaging presents a unique opportunity to capture high-resolution data on crop health, growth stages, and potential stressors.
+								</p>
+								
+								<h3>Aim of this tool</h3>
+
+								This projects aims to provide a screening test to identify hubs of stressed trees within an avocado cropland.
+
+								</p>
+
+								<h3>Use example</h3>
+
+								For a given plot, idenify crop trees. Notice how crop trees in the original picture (left) are correctly identified, whereas
+								trees belonging to a protected area surrounding the cropland are not. This is a crucial step to avoid false positives in the analysis of crop health.
+								Meta's DeepForest model was used to identify trees in the original image. Then, a mask was created to filter out trees that are not part of the cropland.
+								</p>
+
+								Unhealthy trees were previously identified through field surveys. Orthomosaics like this will later be tiled, such as presented on the right-hand picture.
+								</p>
+							
+
+								<div class="image-row">
+									<div class="image">
+										<img src="images/orthomosaic.png" alt="">
+									</div>
+
+									<div class="image">
+										<img src="images/tree_masks.png" alt="">
+									</div>
+
+									<div class="image">
+										<img src="images/tiled_tree_masks.png" alt="">
+									</div>
+								</div>
+
+								<p>
+								--
+								</p>
+
+						
+
+							</div>
+						</section>
+					</article>
+
+				<!-- Footer -->
+				<footer id="footer">
+					<ul class="icons">
+						<!-- 
+						<li><a href="#" class="icon brands fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands fa-dribbble"><span class="label">Dribbble</span></a></li>
+						-->
+						<li>
+							<a href="mailto:felipe.valero98@icloud.com" class="icon solid fa-envelope" title="Contact via email">
+								<span class="label">Email</span>
+							</a>
+						</li>
+						<li><a href="https://www.linkedin.com/in/wfelipevalero/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
+					</ul>
+					<ul class="copyright">
+						<li>
+							&copy; Felipe Valero 
+						</li>
+						<li>
+							Design adapted from <a href="http://html5up.net" target="_blank" rel="noopener">HTML5 UP</a> template									<span> </span>
+						</li>
+					</ul>
+				</footer>
+
+			</div>
+
+		<!-- Scripts -->
+			<!-- Plotly + d3 for client-side CSV loading and plotting -->
+			<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

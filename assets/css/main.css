@@ -2133,6 +2133,23 @@ input, select, textarea {
 			.image.fit img {
 				width: 100%;
 			}
+		
+	.image-row {
+		display: flex;
+		gap: 20px;
+		justify-content: center;
+		align-items: flex-start;
+	}
+
+	.image-row .image {
+		flex: 1;
+	}
+
+	.image-row .image img {
+		width: 100%;
+		height: auto;
+		display: block;
+	}
 
 /* List */
 
